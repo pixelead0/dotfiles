@@ -1,0 +1,72 @@
+[global_config]
+  always_split_with_profile = True
+  borderless = True
+  enabled_plugins = TerminalShot, InactivityWatch, LaunchpadCodeURLHandler, APTURLHandler, LaunchpadBugURLHandler
+  inactive_color_offset = 0.912763157895
+  suppress_multiple_term_dialog = True
+[keybindings]
+[layouts]
+  [[default]]
+    [[[child0]]]
+      fullscreen = False
+      last_active_term = 65438cde-2d75-4ebd-9aec-f7f0a9f8cf1f
+      last_active_window = True
+      maximised = True
+      order = 0
+      parent = ""
+      position = 1920:0
+      size = 1920, 1054
+      title = /bin/bash
+      type = Window
+    [[[child1]]]
+      order = 0
+      parent = child0
+      position = 528
+      ratio = 0.500948766603
+      type = VPaned
+    [[[child3]]]
+      order = 1
+      parent = child1
+      position = 961
+      ratio = 0.500520833333
+      type = HPaned
+    [[[terminal2]]]
+      order = 0
+      parent = child1
+      profile = default
+      type = Terminal
+      uuid = 65438cde-2d75-4ebd-9aec-f7f0a9f8cf1f
+    [[[terminal4]]]
+      order = 0
+      parent = child3
+      profile = default
+      type = Terminal
+      uuid = cd1188ce-fd2b-48f6-9ae5-8609c48edc3e
+    [[[terminal5]]]
+      order = 1
+      parent = child3
+      profile = default
+      type = Terminal
+      uuid = d718e566-4886-4aad-a5c3-d82230dd63f7
+  [[default1]]
+    [[[child1]]]
+      parent = window0
+      type = Terminal
+    [[[window0]]]
+      parent = ""
+      type = Window
+[plugins]
+[profiles]
+  [[default]]
+    background_color = "#222222"
+    background_darkness = 0.9
+    background_type = transparent
+    cursor_color = "#aaaaaa"
+    foreground_color = "#d0d0d0"
+    icon_bell = False
+    palette = "#262626:#c80003:#79e513:#edf630:#49bbfb:#e56aef:#42dfe6:#c7c7c7:#262626:#c80003:#79e513:#edf630:#49bbfb:#e56aef:#42dfe6:#c7c7c7"
+    scrollback_infinite = True
+    scrollbar_position = hidden
+    show_titlebar = False
+    urgent_bell = True
+    use_system_font = False
