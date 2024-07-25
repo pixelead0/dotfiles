@@ -1,0 +1,32 @@
+# Make it so that the screen sessions reattach automatically
+defscrollback 5000
+
+# Enable mouse scrolling and selecting text in screen
+termcapinfo xterm* ti@:te@
+
+# Configurar la barra de estado
+hardstatus alwayslastline
+hardstatus string '%{= kw}%-w%{= BW}%50>%n %t%{-}%+w %=%{gk}%H %l %{=r}%Y-%m-%d %c %{=kw} [%2` %{=kw}] [Weather: %1`]'
+
+# Start with three windows
+screen -t shell1 0
+screen -t shell2 1
+screen -t shell3 2
+
+# Set the default shell to bash
+shell -$SHELL
+
+# Configurar un backtick para obtener el pronóstico meteorológico
+backtick 1 300 300 curl -s "wttr.in/Mexico_city?format=3"
+
+# Define a backtick to fetch detailed Git status
+backtick 2 60 60 'bash -c "git_info() { \
+  branch=$(git symbolic-ref --short HEAD 2>/dev/null || echo HEAD); \
+  status=$(git status --porcelain 2>/dev/null); \
+  if [ -n \"$status\" ]; then \
+    echo \"%{= r}%{+b}$branch:%{-b}%{= kw}\"$status; \
+  else \
+    echo \"%{= g}$branch:%{= kw} clean\"; \
+  fi; \
+}; \
+if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then git_info; fi"'
