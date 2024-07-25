@@ -7,9 +7,20 @@
 [gui]
 	encoding = utf-8
 [alias]
+[gui]
+	encoding = utf-8
+[alias]
+	a = add
+	b = branch --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(contents:subject) %(color:green)(%(committerdate:relative)) [%(authorname)]' --sort=-committerdate -r
+	br = branch
+	cm = commit
+	df = diff
+	fe = fetch
+	gr = grep
+	lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit HEAD
+	mg = merge
 	co = checkout
-	go = branch
-	ci = commit
+	pl = pull
+	ps = push
 	st = status
-	last = log -1 HEAD
-	lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+	sw = switch
