@@ -1,5 +1,8 @@
 alias 'please'='sudo'
 
+# alias '.'='ls -lah'
+alias '..'='cd ..'
+
 alias 'cprr'='rsync -a --human-readable --progress'
 alias 'cpr'='rsync --progress --size-only --inplace --verbose'
 
@@ -7,42 +10,42 @@ alias 'apt'='sudo apt'
 alias 'apt-get'='apt'
 
 alias 'updatedb'='sudo updatedb'
-alias 'pip'='sudo pip'
+#alias 'pip'='sudo pip'
 
-alias 'myip'="wget -q -O - checkip.dyndns.org|sed -e 's/.*Current IP Address: //' -e 's/<.*$//'"
+# alias 'myip'="wget -q -O - checkip.dyndns.org|sed -e 's/.*Current IP Address: //' -e 's/<.*$//'"
+alias 'myip'="curl ifconfig.co"
 alias 'mygateway'="ip route | awk '/default/ { print $3 }'"
 alias 'clima'='curl wttr.in/Mexico_city'
-alias 'speedtest'='date && ~/speedtest-cli --simple && date'
-
+alias 'speedtest'='date && speedtest-cli --simple && date'
+alias 'mypc'='inxi -Fxxxrz'
 alias 'pdf'='xreader-previewer' #Para ver pdfs
 
-#Vagrant Commandas
-alias 'vmsrv'='fab runserver'
-alias 'vmon'='vagrant up && fab runserver'
-alias 'vmoff'='vagrant halt'
-alias 'vmssh'='vagrant ssh'
-
-alias 'puertos'='netstat -pnltu'
-alias 'soff'='sudo service postgresql@9.6-main stop && sudo service postgresql stop && sudo service apache2 stop'
-alias 'webon'='sudo service postgresql start && sudo /opt/lampp/lampp startapache'
-
+alias 'puertos'='netstat -pnltu | grep LISTEN'
 
 # workdirs
-alias 'gw'='cd ~/www/'
+alias 'ggw'='cd ~/www/src'
+alias 'ggd'='cd ~/Descargas'
+alias 'gge'='cd ~/Escritorio'
 
-alias 'gd'='cd ~/Downloads'
-alias 'gde'='cd ~/Desktop'
-alias 'ga'='cd /home/kubrick/www/admos'
-alias 'ga1'='cd /home/kubrick/www/admos/admos_php'
-alias 'ga2'='cd /home/kubrick/www/admos/admos_python'
-alias 'ga3'='cd /home/kubrick/www/admos/admos_cronoxd'
+# GIT
+alias 'ga'='git a'
+alias 'gb'='git b'
+alias 'gbr'='git br'
+alias 'gcm'='git cm'
+alias 'gdf'='git df'
+alias 'gfe'='git fe'
+alias 'ggr'='git gr'
+alias 'gl'='git lg'
+alias 'gmg'='git mg'
+alias 'gco'='git co'
+alias 'gpl'='git pl'
+alias 'gps'='git ps'
+alias 'gst'='git st'
+alias 'gsw'='git sw'
 
-alias 'ghd'='cd /media/kubrick/data/'
-alias 'gx'='cd /media/kubrick/data/nextcloud/xiaomi/'
-alias 'gdb'='cd ~/Dropbox/pixelead0/Dropbox'
+
 
 # Docker
-
 # container start docker
 alias 'dup'='docker-compose up'
 
@@ -54,17 +57,12 @@ alias 'dr'='docker-compose restart'
 
 alias 'dst'='docker stop $(docker ps -a -q)'
 
-alias 'dsql'='docker-compose exec postgres psql -U tianguis_digital_user tianguis_digital_db'
-
-alias 'dmigrate'='docker-compose exec tianguis python manage.py makemigrations && docker-compose exec tianguis python manage.py migrate'
-
-# Segunda sesión de telegram
+#### Segunda sesión de telegram
 alias 'telegram_account1'='/usr/bin/telegram -workdir  /home/kubrick/telegram/adangq.adip/ -- %u'
 
-
 # Download youtube video with subs
-# https://github.com/ytdl-org/youtube-dl
-alias 'yt_video'="youtube-dl \
+# https://github.com/ytdl-org/yt-dlp
+alias 'yt_video'="yt-dlp \
 -o ./'%(uploader)s/%(title)s.%(ext)s' \
 --sub-lang en,es --write-auto-sub --write-sub --convert-subs srt \
 --no-playlist \
@@ -77,7 +75,7 @@ alias 'yt_video'="youtube-dl \
 --merge-output-format mkv "
 
 # Download youtube audio with subs file
-alias 'yt_audio'="youtube-dl \
+alias 'yt_audio'="yt-dlp \
 -o ./'%(uploader)s/%(title)s.%(ext)s' \
 --ignore-errors  \
 --continue  \
@@ -90,7 +88,7 @@ alias 'yt_audio'="youtube-dl \
 --no-overwrites \
 --embed-thumbnail"
 
-alias 'yt_playlist_video'="youtube-dl \
+alias 'yt_playlist_video'="yt-dlp \
 -o ./'%(playlist_uploader)s/%(playlist)s/%(playlist_index)s - %(title)s.f%(format)s.%(ext)s' \
 --sub-lang en,es --write-auto-sub --write-sub --convert-subs srt \
 --continue  \
@@ -103,7 +101,7 @@ alias 'yt_playlist_video'="youtube-dl \
 --merge-output-format mkv "
 
 
-alias 'yt_playlist_audio'="youtube-dl \
+alias 'yt_playlist_audio'="yt-dlp \
 -o ./'%(playlist_uploader)s/%(playlist)s/%(playlist_index)s - %(title)s.f%(format)s.%(ext)s' \
 --ignore-errors  \
 --continue  \
