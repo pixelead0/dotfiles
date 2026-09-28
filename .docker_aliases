@@ -1,0 +1,196 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# DOCKER & DOCKER COMPOSE SUITE (Prefijo: dkr_)
+# ==============================================================================
+# Suite modular de alias y funciones para Docker en entornos Linux / Debian.
+#
+# Características principales:
+# 1. Fallback dinámico de permisos: invoca 'sudo' si el usuario no tiene acceso
+#    al socket unix:///var/run/docker.sock en la subshell actual.
+# 2. Namespace dkr_: evita colisiones de comandos con binarios del sistema POSIX.
+# 3. Optimizado para sistemas Copy-on-Write (Btrfs) y monitoreo de stacks Compose.
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 1. HELPERS INTERNOS DE EJECUCIÓN (PRIVILEGIOS Y SOCKETS)
+# ------------------------------------------------------------------------------
+
+# _dk_bin: Wrapper para Docker CLI con degradación controlada a sudo
+_dk_bin() {
+    if docker ps -q &>/dev/null; then
+        docker "$@"
+    else
+        sudo docker "$@"
+    fi
+}
+
+# _dco_bin: Wrapper para Docker Compose v2 con degradación controlada a sudo
+_dco_bin() {
+    if docker compose version &>/dev/null; then
+        docker compose "$@"
+    else
+        sudo docker compose "$@"
+    fi
+}
+
+
+# ------------------------------------------------------------------------------
+# 2. ATAJOS BASE (ACCESO DIRECTO A BINARIOS)
+# ------------------------------------------------------------------------------
+# Reemplazos directos con fallback para ejecutar comandos ad-hoc sin 'sudo docker'
+alias dk='_dk_bin'       # 'dk ps', 'dk run ...'
+alias dco='_dco_bin'     # 'dco up', 'dco config'
+
+
+# ------------------------------------------------------------------------------
+# 3. DOCKER COMPOSE (ÁMBITO LOCAL / PROYECTO)
+# ------------------------------------------------------------------------------
+# Comandos diseñados para operar dentro de la raíz de un repositorio con
+# docker-compose.yml o compose.yaml.
+
+# dkr_up: Levanta los servicios en segundo plano (-d) y purga contenedores de servicios
+# que fueron retirados del archivo compose (--remove-orphans).
+alias dkr_up='_dco_bin up -d --remove-orphans'
+
+# dkr_build: Fuerza la reconstrucción de las imágenes declaradas con 'build:' sin caché
+# y levanta los servicios resultantes en background.
+alias dkr_build='_dco_bin up -d --build --remove-orphans'
+
+# dkr_down: Detiene la ejecución y remueve contenedores, redes y recursos asociados
+# al archivo Compose del proyecto actual.
+alias dkr_down='_dco_bin down --remove-orphans'
+
+# dkr_downv: Destrucción total del stack local. Incluye la eliminación de volúmenes
+# anónimos y bases de datos locales creadas por este compose (-v).
+alias dkr_downv='_dco_bin down -v --remove-orphans'
+
+# dkr_restart: Reinicio limpio de todos los servicios locales o uno puntual.
+# Uso: dkr_restart [servicio]
+alias dkr_restart='_dco_bin restart'
+
+# dkr_logs: Salida continua (-f) de logs, mostrando timestamp (-t) y un buffer
+# inicial de 100 líneas. Admite especificar el servicio deseado.
+# Uso: dkr_logs [servicio]
+alias dkr_logs='_dco_bin logs -f --tail=100 -t'
+
+# dkr_rm: Eliminación forzada (-f), con volúmenes (-v) de contenedores detenidos (-s).
+alias dkr_rm='_dco_bin rm -fsv'
+
+# dkr_status: Muestra el estado operativo de los contenedores ligados al compose local.
+alias dkr_status='_dco_bin ps'
+
+# dkr_sh: Abre una shell interactiva dentro de un servicio definido en Compose.
+# Intenta invocar /bin/bash; si el contenedor es Alpine o minimalista, usa /bin/sh.
+# Uso: dkr_sh <nombre-servicio>
+dkr_sh() {
+    local target="${1:-}"
+    if [ -z "$target" ]; then
+        echo -e "\033[1;31mError: Debes especificar el nombre del servicio.\033[0m"
+        echo "Uso: dkr_sh <servicio>"
+        return 1
+    fi
+    _dco_bin exec "$target" /bin/bash 2>/dev/null || _dco_bin exec "$target" /bin/sh
+}
+
+
+# ------------------------------------------------------------------------------
+# 4. DOCKER HOST (ÁMBITO GLOBAL DEL SISTEMA)
+# ------------------------------------------------------------------------------
+# Comandos de auditoría, control de procesos y almacenamiento global en el host.
+
+# dkr_ps: Vista tabular compacta de todos los contenedores corriendo en el host
+# mostrando Nombre, Estado y Mapeo de Puertos (evita hashes largos e IDs ruidosos).
+alias dkr_ps='_dk_bin ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"'
+
+# dkr_top: Monitor de recursos interactivo (CPU %, RAM usada, red y lecturas de disco).
+alias dkr_top='_dk_bin stats --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}\t{{.NetIO}}\t{{.BlockIO}}"'
+
+# dkr_df: Desglose del almacenamiento total consumido por el daemon (crítico en Btrfs
+# para monitorear subvolumen @docker, capas, imágenes y cache de BuildKit).
+alias dkr_df='_dk_bin system df'
+
+# dkr_images: Listado compacto de imágenes compiladas/descargadas con su peso real en disco.
+alias dkr_images='_dk_bin images --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}\t{{.ID}}"'
+
+# dkr_vols: Lista simple de volúmenes locales persistentes.
+alias dkr_vols='_dk_bin volume ls'
+
+# dkr_vol_prune: Purga de volúmenes huérfanos que no están vinculados a ningún contenedor.
+alias dkr_prune_vol='_dk_bin volume prune -f'
+
+# dkr_prune: Purga estándar (contenedores parados, redes sin uso e imágenes dangling <none>)
+alias dkr_prune='_dk_bin system prune -f'
+
+# dkr_prune_all: Purga profunda. Elimina TODOS los contenedores parados, redes sin uso
+# y TODAS las imágenes que no estén asociadas a un contenedor activo en este momento.
+alias dkr_prune_all='_dk_bin system prune -a -f'
+
+# dkr_nuke: Limpieza nuclear total. Remueve imágenes no usadas, redes, contenedores y VOLÚMENES huérfanos.
+# Útil en Btrfs para recuperar espacio crítico en el subvolumen @docker.
+dkr_nuke() {
+    echo -e "\033[1;31mADVERTENCIA: Se eliminarán todas las imágenes no usadas, contenedores y volúmenes huérfanos.\033[0m"
+    read -q "REPLY?¿Deseas continuar? (y/n): " 2>/dev/null || read -p "¿Deseas continuar? (y/n): " REPLY
+    echo
+    if [[ "$REPLY" =~ ^[Yy]$ ]]; then
+        _dk_bin system prune -a --volumes -f
+    else
+        echo "Operación cancelada."
+    fi
+}
+
+
+
+
+# dkr_rmi_dangling: Elimina imágenes colgantes intermedias (<none>) resultantes de builds sucesivos.
+alias dkr_rmi_dangling='_dk_bin rmi $(docker images -f "dangling=true" -q 2>/dev/null) 2>/dev/null || echo "No hay imágenes huérfanas."'
+
+# dkr_ip: Mapea cada contenedor activo con su dirección IP interna dentro de la red puente.
+alias dkr_ip='_dk_bin inspect -f "{{.Name}} => {{range .NetworkSettings.Networks}}{{.IPAddress}} {{end}}" $(docker ps -q 2>/dev/null) 2>/dev/null'
+
+# dkr_shell: Abre una terminal interactiva en cualquier contenedor del sistema por ID o nombre.
+# Uso: dkr_shell <nombre_contenedor|id>
+dkr_shell() {
+    local target="${1:-}"
+    if [ -z "$target" ]; then
+        echo -e "\033[1;31mError: Debes especificar el nombre o ID del contenedor.\033[0m"
+        echo "Uso: dkr_shell <contenedor>"
+        return 1
+    fi
+    _dk_bin exec -it "$target" /bin/bash 2>/dev/null || _dk_bin exec -it "$target" /bin/sh
+}
+
+# dkr_stop: Detiene de forma ordenada (SIGTERM -> SIGKILL tras gracia) todos los
+# contenedores en ejecución en el sistema, validando previamente que existan PIDs.
+
+# dkr_stop: Detiene de forma ordenada todos los contenedores en ejecución
+dkr_stop() {
+    local running
+    running=$(_dk_bin ps -q)
+    if [ -n "$running" ]; then
+        echo -e "\033[1;33mDeteniendo contenedores activos en el host...\033[0m"
+        # En Zsh usamos expansion de lineas (f); si es Bash usa word-splitting estandar
+        if [ -n "$ZSH_VERSION" ]; then
+            _dk_bin stop ${(f)running}
+        else
+            _dk_bin stop $running
+        fi
+    else
+        echo "No hay contenedores corriendo en el sistema."
+    fi
+}
+
+# dkr_kill: Terminación inmediata incondicional (SIGKILL) a todos los contenedores activos
+dkr_kill() {
+    local running
+    running=$(_dk_bin ps -q)
+    if [ -n "$running" ]; then
+        echo -e "\033[1;31mTerminando contenedores de forma forzada (SIGKILL)...\033[0m"
+        if [ -n "$ZSH_VERSION" ]; then
+            _dk_bin kill ${(f)running}
+        else
+            _dk_bin kill $running
+        fi
+    else
+        echo "No hay contenedores corriendo en el sistema."
+    fi
+}

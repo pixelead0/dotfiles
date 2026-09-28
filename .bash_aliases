@@ -25,14 +25,38 @@ alias bat='batcat --theme="TwoDark"'
 # ------------------------------------------------------------------------------
 # 2. RED Y DIAGNÓSTICO
 # ------------------------------------------------------------------------------
+
+
 alias myip='curl -s ifconfig.co'
 alias mygateway="ip route | awk '/default/ { print \$3 }'"
-alias puertos='ss -tulpn'
+# alias puertos='ss -tulpn'
 alias speedtest='date && speedtest-cli --simple && date'
 
 # Sincronización robusta con rsync
 alias cprr='rsync -a --human-readable --progress'
 alias cpr='rsync --progress --size-only --inplace --verbose'
+
+puertos() {
+    echo -e "\033[1;34m=== PUERTOS TCP EN ESCUCHA (SISTEMA) ===\033[0m"
+    (
+        echo -e "PUERTO  PROCESO           PID\n------  -------           ---"
+        sudo ss -tlpn | grep LISTEN | awk '{print $4, $6}' | sed -E 's/.*:([0-9]+)/\1/; s/users:\(\(\"//; s/\",pid=/  /; s/,fd=.*//' | sort -n -u
+    ) | column -t
+
+    # Determinar si requerimos sudo para hablar con docker
+    local DOCKER_CMD="docker"
+    if ! docker ps -q &>/dev/null; then
+        DOCKER_CMD="sudo docker"
+    fi
+
+    if command -v docker &>/dev/null && [ -n "$($DOCKER_CMD ps -q 2>/dev/null)" ]; then
+        echo -e "\n\033[1;32m=== CONTENEDORES ACTIVOS, PUERTOS Y RUTAS ===\033[0m"
+        $DOCKER_CMD inspect $($DOCKER_CMD ps -q) --format '{{.Name}} | {{range $p, $conf := .NetworkSettings.Ports}}{{if $conf}}{{$p}} -> {{(index $conf 0).HostPort}} {{end}}{{end}} | {{index .Config.Labels "com.docker.compose.project.working_dir"}}' 2>/dev/null \
+            | sed 's#^/##' \
+            | awk -F ' \\| ' '{printf "%-26s %-25s %s\n", $1, ($2 != "" ? $2 : "Sin puertos"), ($3 != "" ? $3 : "N/A (sin compose)")}' \
+            | (echo -e "CONTENEDOR                 PUERTOS (INT -> HOST)     RUTA DEL PROYECTO\n-------------------------- ------------------------- -----------------"; cat)
+    fi
+}
 
 # ------------------------------------------------------------------------------
 # 3. ACCESOS DIRECTOS DE NAVEGACIÓN
@@ -55,12 +79,10 @@ alias junmount='fusermount3 -u /media/$USER/jardin'
 # ------------------------------------------------------------------------------
 # 6. DOCKER & DOCKER COMPOSE
 # ------------------------------------------------------------------------------
-alias dup='docker compose up'
-alias drm='docker compose rm -fs'
-alias dr='docker compose restart'
-alias dst='docker stop $(docker ps -q) 2>/dev/null || echo "No hay contenedores corriendo"'
-alias dsql='docker compose exec postgres psql -U tianguis_digital_user tianguis_digital_db'
-alias dmigrate='docker compose exec tianguis python manage.py makemigrations && docker compose exec tianguis python manage.py migrate'
+# Cargar suite de alias Docker si existe
+if [ -f "$HOME/.docker_aliases" ]; then
+    . "$HOME/.docker_aliases"
+fi
 
 # ------------------------------------------------------------------------------
 # 7. DESCARGA MULTIMEDIA (yt-dlp)
