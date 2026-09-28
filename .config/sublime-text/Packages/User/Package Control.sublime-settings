@@ -1,0 +1,20 @@
+{
+	"installed_packages":
+	[
+		"A File Icon",
+		"Dockerfile Syntax Highlighting",
+		"GitGutter",
+		"LSP",
+		"LSP-json",
+		"LSP-pyright",
+		"LSP-ruff",
+		"LSP-yaml",
+		"Package Control",
+		"SideBarEnhancements",
+		"SublimeLinter",
+		"Terminus",
+	],
+	"in_process_packages":
+	[
+	],
+}

@@ -1,0 +1,9 @@
+[Nemo Action]
+Name=Copiar ruta absoluta
+Comment=Copia la ruta completa del archivo al portapapeles
+Exec=sh -c 'printf "%s" "$1" | xclip -selection clipboard' dummy %F
+Icon-Name=edit-copy
+Selection=s
+Extensions=any;
+Quote=double
+Dependencies=xclip;

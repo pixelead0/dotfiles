@@ -1,0 +1,80 @@
+{
+    // =========================================================================
+    // 1. TIPOGRAFÍA Y RENDERIZADO VISUAL
+    // =========================================================================
+    "font_face": "FiraCode Nerd Font",
+    "font_size": 11,
+    "font_options":
+    [
+        "subpixel_antialias",     // Suavizado óptimo de fuentes en paneles LCD/LED
+        "no_bold"                 // Evita fuentes engrosadas artificiales
+    ],
+    "line_padding_top": 2,        // Espaciado vertical superior entre líneas
+    "line_padding_bottom": 2,     // Espaciado vertical inferior entre líneas
+    "hardware_acceleration": "opengl", // Renderizado acelerado por GPU en Linux
+
+    // =========================================================================
+    // 2. TEMAS Y ADAPTABILIDAD AL SISTEMA
+    // =========================================================================
+    // Conmutación automática según el modo claro/oscuro del entorno Cinnamon
+    "dark_theme": "Default Dark.sublime-theme",
+    "light_theme": "Default.sublime-theme",
+    "dark_color_scheme": "Packages/Color Scheme - Default/Mariana.sublime-color-scheme",
+    "light_color_scheme": "Packages/Color Scheme - Default/Breakers.sublime-color-scheme",
+
+    // =========================================================================
+    // 3. NAVEGACIÓN, PESTAÑAS Y MINIMAPA
+    // =========================================================================
+    "always_show_minimap_viewport": true, // Marco visible en la zona activa del minimapa
+    "enable_tab_scrolling": true,         // Desplazamiento horizontal fluido de pestañas
+    "highlight_modified_tabs": true,      // Resalta visualmente pestañas con cambios sin guardar
+    "preview_on_click": false,            // Evita abrir archivos en pestañas efímeras con un clic
+    "scroll_past_end": true,              // Permite hacer scroll más allá de la última línea
+    "smooth_scroll": true,                // Animación suave de desplazamiento
+
+    // =========================================================================
+    // 4. EDICIÓN, SINTAXIS Y GUÍAS DE ESTILO
+    // =========================================================================
+    "tab_size": 4,                        // Ancho de tabulación estándar
+    "translate_tabs_to_spaces": true,     // Convierte tabuladores en 4 espacios (PEP 8)
+    "trim_trailing_white_space_on_save": "all", // Limpia espacios residuales al final de línea
+    "ensure_newline_at_eof_on_save": true,      // Garantiza salto de línea POSIX al final del archivo
+    "draw_white_space": ["selection"],    // Muestra puntos de espacio solo en texto seleccionado
+    "highlight_line": true,               // Resalta la línea donde está el cursor activo
+    "match_brackets": true,               // Resalta par de llaves, corchetes y paréntesis
+    "match_tags": true,                   // Resalta etiquetas de cierre HTML/XML correspondientes
+    "rulers": [80, 120],                  // Columnas guía para límite de líneas (80 y 120 caracteres)
+    "word_wrap": false,                   // Desactiva el corte de línea forzado
+
+    // =========================================================================
+    // 5. AUTOCOMPLETADO, INDEXADO Y PERFORMANCE (ST4)
+    // =========================================================================
+    "index_files": true,                  // Indexa el árbol de archivos para salto a definiciones
+    "auto_complete_use_history": true,    // Prioriza sugerencias basadas en lo que más tecleas
+    "auto_complete_use_index": true,      // Sugiere símbolos definidos en otros archivos del proyecto
+    "lsp_format_on_save": false,          // Formateo manual vía comando (activar si se usa LSP-ruff)
+
+    // =========================================================================
+    // 6. INTEGRACIÓN CON GIT Y CONTROL DE ARCHIVOS
+    // =========================================================================
+    "show_git_status": true,              // Insignias de git (modificado, nuevo) en el árbol lateral
+    "hot_exit": "always",                 // Guarda la sesión completa sin pedir guardar al cerrar
+    "remember_open_files": true,          // Restaura los archivos abiertos al relanzar Sublime
+
+    // Patrones excluidos del buscador rápido (Ctrl+P) para evitar congelamientos
+    "binary_file_patterns":
+    [
+        "*.jpg", "*.jpeg", "*.png", "*.gif", "*.ttf", "*.tga", "*.dds",
+        "*.ico", "*.eot", "*.pdf", "*.swf", "*.jar", "*.zip", "*.tar.gz",
+        "*.pyc", "__pycache__/**", ".git/**", "node_modules/**", ".venv/**",
+        ".mypy_cache/**", ".pytest_cache/**", ".ruff_cache/**"
+    ],
+
+    // =========================================================================
+    // 7. PAQUETES IGNORADOS
+    // =========================================================================
+    "ignored_packages":
+    [
+        "Vintage"                         // Deshabilita el modo Vim integrado por defecto
+    ]
+}

@@ -1,0 +1,8 @@
+[Nemo Action]
+Name=Abrir con Sublime Text
+Comment=Abrir carpeta o archivo en Sublime Text
+Exec=subl %F
+Icon-Name=sublime-text
+Selection=any
+Extensions=any;
+Quote=double
